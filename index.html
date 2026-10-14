@@ -119,13 +119,25 @@ h1{color:#b8ffcc;font-size:26px;letter-spacing:4px;text-shadow:0 0 8px rgba(130,
 }
 
 /* 集成演算按钮高亮 */
-.modeBtn.calcActive{
-    border-color:#ff4d4d;color:#ffe0e0;
-    background:linear-gradient(90deg,rgba(255,80,80,.25),rgba(255,150,80,.15));
-    box-shadow:0 0 14px rgba(255,80,80,.6),inset 0 0 10px rgba(255,80,80,.2);
-    text-shadow:0 0 6px rgba(255,80,80,.7);
+#modeCalcBtn{
+    border-color:#ff4d4d;
+    color:#ffe0e0;
+    background:linear-gradient(90deg,rgba(255,80,80,.18),rgba(255,150,80,.08));
+    box-shadow:0 0 10px rgba(255,80,80,.4),inset 0 0 8px rgba(255,80,80,.15);
+    text-shadow:0 0 6px rgba(255,80,80,.65);
 }
-
+#modeCalcBtn:hover:not(:disabled){
+    border-color:#ff6666;
+    color:#fff;
+    background:linear-gradient(90deg,rgba(255,80,80,.32),rgba(255,150,80,.18));
+    box-shadow:0 0 14px rgba(255,80,80,.7),inset 0 0 10px rgba(255,80,80,.25);
+}
+#modeCalcBtn.calcActive{
+    border-color:#ff4d4d;color:#fff;
+    background:linear-gradient(90deg,rgba(255,80,80,.5),rgba(255,150,80,.32));
+    box-shadow:0 0 18px rgba(255,80,80,.9),inset 0 0 14px rgba(255,80,80,.35);
+    text-shadow:0 0 10px rgba(255,80,80,.95);
+}
 /* 面板开关按钮 */
 .occToggle{
     position:fixed;right:14px;top:14px;z-index:50;
@@ -1104,7 +1116,7 @@ function updateRem(){
   if(remOrange>0)html+=`<span class="remOrangeText">待接受的罗德岛增援：${remOrange}</span>`;
   if(bonusOrangeNote>0)html+=`<span class="remOrangeText">下场战斗额外支援 +${bonusOrangeNote} 已计入</span>`;
   if(bonusOrange>0)html+=`<span class="remOrangeText">下场战斗额外支援 +${bonusOrange}</span>`;
-  if(redPulseActive)html+=`<span class="remOrangeText">危机指标出现，验算终止</span>`;
+  if(redPulseActive)html+=`<span class="remOrangeText">危机出现，请优先演算</span>`;
   rem.innerHTML=html;
 }
 /* ===================== 占用可视化 ===================== */
@@ -1176,16 +1188,27 @@ function checkRoundEnd(){
   // 红色触发：立即结束
   if(redPulseActive){ finishRound(); return; }
 
-  // 集成演算：cost 达上限即结束
+  // 集成演算
   if(calcMode){
-    if(calcCostLimit <= 0){ finishRound(); return; }
-    if(calcCostUsed >= calcCostLimit){ finishRound(); return; }
+    const blueDone = (calcCostLimit <= 0) || (calcCostUsed >= calcCostLimit);
+    if(blueDone){
+      // 负面已抽完（或没得抽），但支援还没抽完 → 等支援
+      if(remOrange > 0) return;
+      if(rerollCharges>0 && currentRoundBlueResults.length>0){ enterRerollMode(); return; }
+      finishRound();
+      return;
+    }
     if(remBlue>0 || remOrange>0) return;
     if(rerollCharges>0 && currentRoundBlueResults.length>0){ enterRerollMode(); }
     else{ finishRound(); }
     return;
   }
 
+  // 普通模式
+  if(remBlue>0 || remOrange>0) return;
+  if(rerollCharges>0 && currentRoundBlueResults.length>0){ enterRerollMode(); }
+  else{ finishRound(); }
+}
   // 普通模式
   if(remBlue>0 || remOrange>0) return;
   if(rerollCharges>0 && currentRoundBlueResults.length>0){ enterRerollMode(); }
@@ -1400,7 +1423,7 @@ function startRound(prize){
 
     // 如果集成演算 costLimit=0，直接结束本轮
     if(calcMode && calcCostLimit <= 0){
-      setTimeout(()=>{ checkRoundEnd(); }, 400);
+      setTimeout(()=>{ checkRoundEnd(); }, 50);
     }
 }
 /* ========== 主按钮 ========== */
