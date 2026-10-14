@@ -60,18 +60,25 @@ h1{color:#b8ffcc;font-size:26px;letter-spacing:4px;text-shadow:0 0 8px rgba(130,
 .modeSwitch{display:flex;gap:8px;margin-bottom:18px}
 .modeBtn{
     flex:1;padding:10px 8px;font-size:13px;letter-spacing:2px;
-    border:1px solid #2f6b52;background:rgba(130,232,204,.05);
-    color:#7fbfa4;cursor:pointer;transition:.2s;font-family:inherit;
+    border:1px solid #2f6b52;
+    background:linear-gradient(90deg,rgba(130,232,204,.10),rgba(0,200,110,.05));
+    color:#9fe8c8;cursor:pointer;transition:.2s;font-family:inherit;
+    box-shadow:0 0 10px rgba(130,232,204,.2),inset 0 0 8px rgba(130,232,204,.08);
+    text-shadow:0 0 6px rgba(130,232,204,.35);
 }
-.modeBtn:hover:not(:disabled){border-color:#82e8cc;color:#d6ffe0;background:rgba(130,232,204,.12)}
-.modeBtn.active{
+.modeBtn:hover:not(:disabled){
     border-color:#82e8cc;color:#eafff2;
-    background:linear-gradient(90deg,rgba(130,232,204,.2),rgba(0,200,110,.15));
-    box-shadow:0 0 12px rgba(130,232,204,.45),inset 0 0 10px rgba(130,232,204,.15);
-    text-shadow:0 0 6px rgba(130,232,204,.6);
+    background:linear-gradient(90deg,rgba(130,232,204,.22),rgba(0,200,110,.12));
+    box-shadow:0 0 14px rgba(130,232,204,.6),inset 0 0 10px rgba(130,232,204,.2);
+    text-shadow:0 0 8px rgba(130,232,204,.7);
+}
+.modeBtn.active{
+    border-color:#82e8cc;color:#fff;
+    background:linear-gradient(90deg,rgba(130,232,204,.35),rgba(0,200,110,.2));
+    box-shadow:0 0 18px rgba(130,232,204,.8),inset 0 0 12px rgba(130,232,204,.3);
+    text-shadow:0 0 10px rgba(130,232,204,.9);
 }
 .modeBtn:disabled{opacity:.35;cursor:not-allowed;filter:grayscale(.6)}
-
 #drawBtn{padding:16px 42px;font-size:20px;letter-spacing:3px;border:1px solid #82e8cc;background:linear-gradient(90deg,rgba(130,232,204,.1),rgba(0,200,110,.25));color:#eafff2;cursor:pointer;transition:.2s;width:100%;box-shadow:0 0 10px rgba(130,232,204,.5),inset 0 0 10px rgba(130,232,204,.15)}
 #drawBtn:hover{background:linear-gradient(90deg,rgba(130,232,204,.25),rgba(0,230,130,.45));box-shadow:0 0 18px rgba(130,232,204,.8),inset 0 0 14px rgba(130,232,204,.25)}
 #drawBtn:active{transform:scale(.97)}
@@ -1003,7 +1010,6 @@ modeCustomBtn.onclick = ()=>{ playClickSound(); drawMode='custom'; pickOverlay.c
 if(modeCalcBtn){
   modeCalcBtn.onclick = ()=>{
     playClickSound();
-    // 抽取进行中不允许切换
     if(btnWrap.style.display === 'block' && drawBtn.disabled){
       return;
     }
@@ -1011,22 +1017,28 @@ if(modeCalcBtn){
     saveCalcMode();
     occVisible = calcMode;
     saveOccVisible();
+
+    if(calcMode){
+      // 开启：若当前红概率是 0，自动设为 2%
+      if((rarityProb[5] || 0) === 0){
+        rarityProb[5] = 2;
+        saveRarity();
+        if(rarityP5) rarityP5.value = 2;
+        updateRaritySumHint();
+      }
+    }else{
+      // 关闭：红概率强制归 0
+      rarityProb[5] = 0;
+      saveRarity();
+      if(rarityP5) rarityP5.value = 0;
+      updateRaritySumHint();
+    }
+
     syncCalcBtnUI();
     syncOccToggleUI();
     renderOccupancy();
   };
-}if(occToggleBtn){
-  occToggleBtn.onclick = ()=>{
-    playClickSound();
-    // 集成演算模式下强制开启，不允许手动关
-    if(calcMode && occVisible) return;
-    occVisible = !occVisible;
-    saveOccVisible();
-    syncOccToggleUI();
-    renderOccupancy();
-  };
 }
-
 /* ===================== 协议选择面板 ===================== */
 function buildPickList(){
   pickList.innerHTML = '';
@@ -1315,7 +1327,7 @@ confirmRerollBtn.onclick=()=>{
     }else{
       exitRerollMode();
     }
-},500);};
+},400);};
 
 function exitRerollMode(){
   isRerollMode=false;
@@ -1344,7 +1356,7 @@ function openBlueBubble(btn, text, callback){
       bubble.classList.remove("show");
       isWaitingBubble = false;
       callback();
-  },1800);
+  },800);
 }
 function openOrangeBubble(text, callback){
   if(!orangeBubble) return;
@@ -1355,7 +1367,7 @@ function openOrangeBubble(text, callback){
       orangeBubble.classList.remove("show");
       isWaitingBubble = false;
       callback();
-  },1800);
+  },800);
 }
 
 /* ========== 开始一轮 ========== */
@@ -1501,7 +1513,7 @@ blueBtns.forEach((btn,idx)=>{
             updateRem();
             renderOccupancy();
             checkRoundEnd();
-        },500);
+        },400);
     });
   }
 });
@@ -1538,7 +1550,7 @@ orangeBtn.onclick=()=>{
             }
             updateRem();
             checkRoundEnd();
-        },500);
+        },400);
     });
 };
 
