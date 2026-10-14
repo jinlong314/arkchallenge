@@ -475,7 +475,7 @@ details.groupBox .groupInner{padding:6px 10px 10px;border-top:1px solid #1c4a38}
 <div class="helpOverlay" id="helpOverlay">
 <div class="helpBox">
   <button class="helpClose" id="helpClose">×</button>
-  <div><strong>v1.5.1</strong></div>
+  <div><strong>v1.5.0</strong></div>
   <div>新增 <strong>集成演算模式</strong> 与 <strong>红色词条</strong>。</div>
   <div>· 新模式 · 集成演算：根据cost完善你的指标吧！</div>
   <div>· 新要素 · 危机词条：抽到立即结束本轮。</div>
@@ -1009,15 +1009,13 @@ if(modeCalcBtn){
     }
     calcMode = !calcMode;
     saveCalcMode();
-    // 开启集成演算 → 面板自动开；关闭 → 面板自动关
     occVisible = calcMode;
     saveOccVisible();
     syncCalcBtnUI();
     syncOccToggleUI();
     renderOccupancy();
   };
-}
-if(occToggleBtn){
+}if(occToggleBtn){
   occToggleBtn.onclick = ()=>{
     playClickSound();
     // 集成演算模式下强制开启，不允许手动关
