@@ -1208,11 +1208,6 @@ function checkRoundEnd(){
   if(rerollCharges>0 && currentRoundBlueResults.length>0){ enterRerollMode(); }
   else{ finishRound(); }
 }
-  // 普通模式
-  if(remBlue>0 || remOrange>0) return;
-  if(rerollCharges>0 && currentRoundBlueResults.length>0){ enterRerollMode(); }
-  else{ finishRound(); }
-}
 function finishRound(){
   playCompleteSound();
   saveRoundToHistory();
