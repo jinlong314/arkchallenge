@@ -1104,7 +1104,7 @@ function updateRem(){
   if(remOrange>0)html+=`<span class="remOrangeText">待接受的罗德岛增援：${remOrange}</span>`;
   if(bonusOrangeNote>0)html+=`<span class="remOrangeText">下场战斗额外支援 +${bonusOrangeNote} 已计入</span>`;
   if(bonusOrange>0)html+=`<span class="remOrangeText">下场战斗额外支援 +${bonusOrange}</span>`;
-  if(redPulseActive)html+=`<span class="remOrangeText">💀 红色词条已触发，本轮终止</span>`;
+  if(redPulseActive)html+=`<span class="remOrangeText">危机指标出现，验算终止</span>`;
   rem.innerHTML=html;
 }
 /* ===================== 占用可视化 ===================== */
